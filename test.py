@@ -36,7 +36,7 @@ class BlockChain(object):
 
     def add_transaction(self,sender_blockechain_adress,recipient_blockchain_adress,value):
         transaction =utils.sorted_dict_by_key({
-          "sender_blockechain_adress":sender_blockechain_adress,
+          "sender_blockchain_adress":sender_blockechain_adress,
           "recipient_blockchain_adress":recipient_blockchain_adress,
           "value":float(value)  
         })
@@ -71,8 +71,16 @@ class BlockChain(object):
         self.create_block(nonce,previous_hash)
         logger.info({"action":"mining","status":"success"})
         return True
-
-
+    def caluculate_total_amount(self,block_chain_adress):
+        total_amount = 0.0
+        for block in self.chain:
+            for transaction in block["transactions"]:
+                value = float(transaction["value"])
+                if block_chain_adress == transaction["recipient_blockchain_adress"]:
+                    total_amount +=value
+                if block_chain_adress == transaction["sender_blockchain_adress"]:
+                    total_amount -= value
+        return total_amount
 
 if __name__ == "__main__":
     my_blockchain_address ="my_blockchain_address"
@@ -87,6 +95,9 @@ if __name__ == "__main__":
     block_chain.add_transaction("X","Y",3.0)
     block_chain.mining()
     utils.pprint(block_chain.chain)
+
+    print("my",block_chain.caluculate_total_amount(my_blockchain_address))
+    print("C",block_chain.caluculate_total_amount("C"))
 
 
 
