@@ -3,7 +3,9 @@ import sys
 import time
 import utils
 import json,hashlib
-
+import hashlib
+from ecdsa import NIST256p
+from ecdsa import VerifyingKey
 MINING_DIFFICULTY=3
 MINING_SENDER = "THE BLOCKCHAIN"
 MINING_REWARD = 1.0
@@ -34,14 +36,30 @@ class BlockChain(object):
         sorted_block = json.dumps(block,sort_keys=True)
         return hashlib.sha256(sorted_block.encode()).hexdigest()
 
-    def add_transaction(self,sender_blockechain_adress,recipient_blockchain_adress,value):
+    def add_transaction(self,sender_blockchain_adress,recipient_blockchain_adress,value,sender_public_key=None,signature=None):
         transaction =utils.sorted_dict_by_key({
-          "sender_blockchain_adress":sender_blockechain_adress,
+          "sender_blockchain_adress":sender_blockchain_adress,
           "recipient_blockchain_adress":recipient_blockchain_adress,
           "value":float(value)  
         })
-        self.transaction_pool.append(transaction)
-        return True
+        if sender_blockchain_adress ==MINING_SENDER:
+            self.transaction_pool.append(transaction)
+            return True
+        if self.verify_transaction_signature(sender_public_key,signature,transaction):
+            self.transaction_pool.append(transaction)
+            return True
+        return False
+
+    def verify_transaction_signature(self,sender_public_key,signature,transaction):
+        sha256 = hashlib.sha256()
+        sha256.update(str(transaction).encode("utf-8"))
+        message = sha256.digest()
+        signature_bytes = bytes().fromhex(signature)
+        verifying_key = VerifyingKey.from_string(
+            bytes().fromhex(sender_public_key),curve=NIST256p
+        )
+        verified_key = verifying_key.verify(signature_bytes,message)
+        return verified_key
 
     def valid_proof(self,transactions,previous_hash,nonce,difficulty=MINING_DIFFICULTY):
         guess_block = utils.sorted_dict_by_key({
@@ -62,7 +80,7 @@ class BlockChain(object):
 
     def mining(self):
         self.add_transaction(
-            sender_blockechain_adress = MINING_SENDER,
+            sender_blockchain_adress = MINING_SENDER,
             recipient_blockchain_adress = self.blockchain_adress,
             value = MINING_REWARD
         )
