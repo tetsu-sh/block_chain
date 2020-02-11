@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 
 class BlockChain(object):
 
-    def __init__(self,blockchain_adress=None):
+    def __init__(self,blockchain_adress=None,port=None):
        self.transaction_pool = []
        self.chain = []
        self.create_block(0,self.hash({}))
        self.blockchain_adress = blockchain_adress 
+       self.port = port
 
     def create_block(self, nonce,previous_hash):
         block = utils.sorted_dict_by_key({
