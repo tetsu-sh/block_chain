@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>Wallet</title>
+</head>
+<body>
+    <div>
+        <h1>Wallet</h1>
+        <div id = "wallet_amount">0</div>
+        <button id="reload_wallet">Reload Wallet</button>
+        <p>Public Key</p>
+        <textarea  id="public_key" cols="100" rows="2"></textarea>
+        <p>Private Key</p>
+        <textarea  id="private_key" cols="100" rows="1"></textarea>
+        <p>Blockchain Adress</p>
+        <textarea  id="blockchain_adress" cols="100" rows="1"></textarea>
+    </div>
+
+    <div>
+        <h1>Send Money</h1>
+        <div>
+            Adress: <input type="text" size="100" id="recipient_blockchain_adress"><br>
+            Amount: <input type="text" id="send_amount"><br>
+            <button id="send_money_button">Send</button>
+        </div>
+    </div>
+    
+</body>
+</html>
